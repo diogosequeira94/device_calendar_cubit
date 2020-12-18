@@ -11,34 +11,52 @@ class EventFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              controller: eventNameController,
-              decoration: InputDecoration(
-                  labelText: 'Event Name'
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: eventNameController,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 5.0),
+                    ),
+                    labelText: 'Event Name'
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              controller: eventDescriptionController,
-              decoration: InputDecoration(
-                  labelText: 'Event description'
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: eventDescriptionController,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.red,
+                          width: 5.0),
+                    ),
+                    labelText: 'Event description'
+                ),
+                maxLines: 3,
+                maxLength: 250,
               ),
-              maxLines: 5,
-              maxLength: 250,
             ),
-          ),
-          const SizedBox(height: 8.0),
-          FlatButton(onPressed: () {
-            getEventData(eventNameController.text, eventDescriptionController.text);
-          }, child: Text('Create Event')),
-        ],
+            const SizedBox(height: 8.0),
+            Container(
+              width: double.infinity,
+              child: RaisedButton(
+                color: Colors.deepOrange,
+                  onPressed: () {
+                getEventData(eventNameController.text, eventDescriptionController.text);
+              }, child: Text('Create Event', style: TextStyle(color: Colors.white),)),
+            ),
+          ],
+        ),
       ),
     );
   }

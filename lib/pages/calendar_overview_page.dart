@@ -3,6 +3,7 @@ import 'package:device_calendar_sandbox/widgets/event_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/add_to_calendar_cubit.dart';
+import '../models/calendar_event_model.dart';
 
 class CalendarOverviewPage extends StatefulWidget {
   CalendarOverviewPage({Key key}) : super(key: key);
@@ -12,11 +13,12 @@ class CalendarOverviewPage extends StatefulWidget {
 }
 
 class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
+  var _calendarEvent;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar Cubit Demo'),
+        title: Text('Event to Calendar Cubit Demo'),
       ),
       body: BlocConsumer<AddToCalendarCubit, AddToCalendarState>(
         listener: (context, state) {
@@ -24,6 +26,14 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             return Center(
               child: CircularProgressIndicator(),
             );
+          } else if(state is AddToCalendarLoadCalendarsFailure){
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(state.message),
+            ));
+          } else if (state is AddToCalendarLoadCalendarsSuccess){
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(state.message),
+            ));
           }
         },
         builder: (context, state){
@@ -44,7 +54,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
           }
           if(state is AddToCalendarSuccess) {
             Scaffold.of(context).showSnackBar(
-              SnackBar(content: Text('Added with Success'),
+              SnackBar(content: Text(state.message),
               )
             );
           }
@@ -54,7 +64,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             return FloatingActionButton(
               onPressed: () {
                 final calendarCubit = context.bloc<AddToCalendarCubit>();
-                calendarCubit.addToCalendar();
+                calendarCubit.addToCalendar(_calendarEvent, '2');
               },
               tooltip: 'Increment',
               child: Icon(Icons.add),
@@ -65,7 +75,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             return FloatingActionButton(
               onPressed: () {
                 final calendarCubit = context.bloc<AddToCalendarCubit>();
-                calendarCubit.addToCalendar();
+                calendarCubit.addToCalendar(_calendarEvent, '2');
               },
               tooltip: 'Increment',
               child: Icon(Icons.add),
@@ -74,7 +84,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             return FloatingActionButton(
               onPressed: () {
                 final calendarCubit = context.bloc<AddToCalendarCubit>();
-                calendarCubit.addToCalendar();
+                calendarCubit.addToCalendar(_calendarEvent, '2');
               },
               tooltip: 'Increment',
               child: Icon(Icons.add),
@@ -85,17 +95,28 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
     );
   }
 
+  void _submitEvent(String eventName, String eventDescription) {
+    _calendarEvent = CalendarEventModel(
+      eventTitle: eventName,
+      eventDescription: eventDescription,
+      eventDurationInHours: 3,
+    );
+  }
+
   Widget _buildInitialLayout() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            'Calendar App',
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          EventFormWidget(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Event Calendar App',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            const SizedBox(height: 18.0),
+            EventFormWidget(_submitEvent),
+          ],
+        ),
       ),
     );
   }
