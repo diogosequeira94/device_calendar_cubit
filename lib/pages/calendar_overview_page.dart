@@ -1,31 +1,38 @@
 import 'package:device_calendar_sandbox/cubit/add_to_calendar_cubit.dart';
+import 'package:device_calendar_sandbox/widgets/event_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/add_to_calendar_cubit.dart';
 
-class CalendarPage extends StatefulWidget {
-  CalendarPage({Key key}) : super(key: key);
+class CalendarOverviewPage extends StatefulWidget {
+  CalendarOverviewPage({Key key}) : super(key: key);
 
   @override
-  _CalendarPageState createState() => _CalendarPageState();
+  _CalendarOverviewPageState createState() => _CalendarOverviewPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar Sample'),
+        title: Text('Calendar Cubit Demo'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Calendar App',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: BlocConsumer<AddToCalendarCubit, AddToCalendarState>(
+        listener: (context, state) {
+          if(state is AddToCalendarLoadCalendarsInProgress){
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+        builder: (context, state){
+          if(state is AddToCalendarInitial) {
+            return _buildInitialLayout();
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
       ),
       floatingActionButton: BlocConsumer<AddToCalendarCubit, AddToCalendarState>(
         listener: (context, state) {
@@ -75,6 +82,21 @@ class _CalendarPageState extends State<CalendarPage> {
           }
         }
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Widget _buildInitialLayout() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Calendar App',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          EventFormWidget(),
+        ],
+      ),
     );
   }
 }
