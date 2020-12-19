@@ -1,10 +1,9 @@
 import 'package:device_calendar/device_calendar.dart';
-import 'package:device_calendar_sandbox/cubit/add_to_calendar_cubit.dart';
+import 'package:device_calendar_sandbox/cubit/calendar_cubit.dart';
 import 'package:device_calendar_sandbox/pages/calendar_event_form_page.dart';
 import 'package:device_calendar_sandbox/utils/calendar_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../cubit/add_to_calendar_cubit.dart';
 
 class CalendarOverviewPage extends StatefulWidget {
   CalendarOverviewPage({Key key}) : super(key: key);
@@ -22,27 +21,29 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
       appBar: AppBar(
         title: Text(CalendarStrings.appTitle),
       ),
-      body: BlocConsumer<AddToCalendarCubit, AddToCalendarState>(
+      body: BlocConsumer<CalendarCubit, CalendarState>(
         listener: (context, state) {
-          if (state is AddToCalendarLoadCalendarsInProgress) {
+          if (state is CalendarsLoadInProgress) {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state is AddToCalendarLoadCalendarsFailure) {
+          } else if (state is CalendarsLoadFailure) {
             Scaffold.of(context).showSnackBar(SnackBar(
               content: Text(state.message),
             ));
           }
         },
         builder: (context, state) {
-          if (state is AddToCalendarInitial) {
+          if (state is CalendarInitial) {
             return _buildInitialLayout();
-          } else if (state is AddToCalendarLoadCalendarsInProgress) {
+          } else if (state is CalendarsLoadInProgress) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is AddToCalendarLoadCalendarsSuccess || state is AddToCalendarSuccess) {
+          } else if (state is CalendarsLoadSuccess || state is AddToCalendarSuccess) {
             return _buildCalendarsListLayout(_calendars);
+          } else if (state is CalendarsLoadFailure){
+            return _buildInitialLayout();
           } else {
-            return Center(child: Text(state.toString()));
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -59,7 +60,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Available Device Calendars',
+            'Available Calendars',
             style: TextStyle(
               fontSize: 18.0,
             ),
@@ -70,20 +71,25 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
           child: ListView.builder(
               itemCount: calendars.length,
               itemBuilder: (BuildContext context, int index) {
-                return new ListTile(
-                  leading: Icon(Icons.calendar_today),
-                  title: Text(calendars[index].name),
-                  subtitle: Text('Read Only? ${calendars[index].isReadOnly}'),
-                  trailing: Text(calendars[index].id),
-                  onTap: () {
-                    if (calendars[index].isReadOnly) {
-                      Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
-                        content: Text('This calendar is read only!'),
-                      ));
-                    } else {
-                      _selectedCalendarPressed(calendars[index].name, calendars[index].id);
-                    }
-                  },
+                return Card(
+                  child: ListTile(
+                    leading: Image(
+                      height: 40.0,
+                        width: 40.0,
+                        image: AssetImage(CalendarStrings.pathToCalendarImg)),
+                    title: Text(calendars[index].name),
+                    subtitle: Text('Is Read Only? ${calendars[index].isReadOnly ? 'Yes' : 'No'}'),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      if (calendars[index].isReadOnly) {
+                        Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
+                          content: Text('This calendar is read only!'),
+                        ));
+                      } else {
+                        _selectedCalendarPressed(calendars[index].name, calendars[index].id);
+                      }
+                    },
+                  ),
                 );
               }),
         ),
@@ -94,7 +100,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   _selectedCalendarPressed(String selectedCalendarName, String selectedCalendarId){
     Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => BlocProvider.value(
-            value: BlocProvider.of<AddToCalendarCubit>(context),
+            value: BlocProvider.of<CalendarCubit>(context),
             child: CalendarEventFormPage(
                 selectedCalendarName: selectedCalendarName,
                 selectedCalendarId: selectedCalendarId))));
@@ -109,21 +115,23 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             Text(
               CalendarStrings.mainTitle,
               style: TextStyle(
-                fontSize: 24.0,
+                fontSize: 30.0,
               ),
             ),
             const SizedBox(height: 32.0),
             Image(width: 200,
                 height: 200,
-                image: AssetImage('assets/images/calendar_icon.png')),
+                image: AssetImage(CalendarStrings.pathToCalendarImg)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
               child: Container(
                 width: double.infinity,
                 child: RaisedButton(
                     color: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
                     onPressed: () async {
-                      final calendarCubit = context.read<AddToCalendarCubit>();
+                      final calendarCubit = context.read<CalendarCubit>();
                       _calendars = await calendarCubit.loadCalendars();
                     },
                     child: Text(

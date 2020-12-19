@@ -1,5 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
-import 'package:device_calendar_sandbox/cubit/add_to_calendar_cubit.dart';
+import 'package:device_calendar_sandbox/cubit/calendar_cubit.dart';
 import 'package:device_calendar_sandbox/pages/calendar_overview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: BlocProvider(
-          create: (context) => AddToCalendarCubit(DeviceCalendarPlugin()),
+          create: (context) => CalendarCubit(DeviceCalendarPlugin()),
           child: CalendarOverviewPage()),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:device_calendar_sandbox/cubit/add_to_calendar_cubit.dart';
+import 'package:device_calendar_sandbox/cubit/calendar_cubit.dart';
 import 'package:device_calendar_sandbox/models/calendar_event_model.dart';
 import 'package:device_calendar_sandbox/utils/calendar_strings.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class CalendarEventFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final _addToCalenderCubit = BlocProvider.of<AddToCalendarCubit>(context);
+    final _addToCalenderCubit = BlocProvider.of<CalendarCubit>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -100,11 +100,13 @@ class CalendarEventFormPage extends StatelessWidget {
                         Container(
                           height: 40.0,
                           width: double.infinity,
-                          child: BlocBuilder<AddToCalendarCubit,
-                              AddToCalendarState>(builder: (context, state) {
+                          child: BlocBuilder<CalendarCubit,
+                              CalendarState>(builder: (context, state) {
                             if (state is AddToCalendarInProgress) {
                               return RaisedButton(
                                   color: Theme.of(context).primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0)),
                                   onPressed: null,
                                   disabledColor: Theme.of(context).primaryColor,
                                   child: const SizedBox(
@@ -118,6 +120,8 @@ class CalendarEventFormPage extends StatelessWidget {
                             } else {
                               return RaisedButton(
                                   color: Theme.of(context).primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0)),
                                   onPressed: () {
                                     if (_areEventDetailsValid()) {
                                       _submitEvent(
@@ -157,7 +161,7 @@ class CalendarEventFormPage extends StatelessWidget {
         eventDescriptionController.text.length != 0 && eventDurationController.text.length != 0;
   }
 
-  void _submitEvent(AddToCalendarCubit _addToCalendarCubit, String eventName,
+  void _submitEvent(CalendarCubit _addToCalendarCubit, String eventName,
       String eventDescription, String eventDuration) {
 
     var _calendarEvent = CalendarEventModel(

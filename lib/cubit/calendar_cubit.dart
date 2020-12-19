@@ -1,30 +1,30 @@
 import 'package:bloc/bloc.dart';
 import 'package:device_calendar/device_calendar.dart';
+import 'package:device_calendar_sandbox/models/calendar_event_model.dart';
 import 'package:device_calendar_sandbox/utils/calendar_strings.dart';
 import 'package:equatable/equatable.dart';
 
-import '../models/calendar_event_model.dart';
-part 'add_to_calendar_state.dart';
+part 'calendar_state.dart';
 
-class AddToCalendarCubit extends Cubit<AddToCalendarState> {
+class CalendarCubit extends Cubit<CalendarState> {
   final DeviceCalendarPlugin _deviceCalendarPlugin;
 
-  AddToCalendarCubit(this._deviceCalendarPlugin)
-      : super(AddToCalendarInitial());
+  CalendarCubit(this._deviceCalendarPlugin)
+      : super(CalendarInitial());
 
   Future<List<Calendar>> loadCalendars() async {
-    emit(AddToCalendarLoadCalendarsInProgress());
+    emit(CalendarsLoadInProgress());
     //Added for visual purposes
     await Future.delayed(const Duration(seconds: 1));
     // Retrieve user's calendars from mobile device
     // Request permissions first if they haven't been granted
     var _calendars;
     try {
-      var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
-      if (permissionsGranted.isSuccess && !permissionsGranted.data) {
-        permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
-        if (!permissionsGranted.isSuccess || !permissionsGranted.data) {
-          emit(AddToCalendarLoadCalendarsFailure(
+      var arePermissionsGranted = await _deviceCalendarPlugin.hasPermissions();
+      if (arePermissionsGranted.isSuccess && !arePermissionsGranted.data) {
+        arePermissionsGranted = await _deviceCalendarPlugin.requestPermissions();
+        if (!arePermissionsGranted.isSuccess || !arePermissionsGranted.data) {
+          emit(CalendarsLoadFailure(
               CalendarStrings.noPermission));
           return List.empty();
         }
@@ -32,14 +32,14 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
       _calendars = calendarsResult?.data;
       if (_calendars.isEmpty || calendarsResult.errorMessages.length > 0) {
-        emit(AddToCalendarLoadCalendarsFailure(
+        emit(CalendarsLoadFailure(
             CalendarStrings.noCalendars));
         return List.empty();
       }
     } catch (e) {
       print(e.toString());
     }
-    emit(AddToCalendarLoadCalendarsSuccess());
+    emit(CalendarsLoadSuccess());
     return _calendars;
   }
 
