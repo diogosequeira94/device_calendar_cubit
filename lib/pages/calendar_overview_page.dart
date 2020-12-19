@@ -81,23 +81,43 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   }
 
   Widget _buildCalendarsListLayout(List<Calendar> calendars) {
-    return Center(
-      child: SingleChildScrollView(
-          child: ListView.builder(
-              itemCount: calendars.length,
-              itemBuilder: (BuildContext context, int index) {
-                return new ListTile(
-                  leading: Icon(Icons.calendar_today),
-                  title: Text(calendars[index].name),
-                  subtitle: Text(calendars[index].accountType),
-                  trailing: Text(calendars[index].id),
-                  onTap: () {
-                    final calendarCubit = context.bloc<AddToCalendarCubit>();
-                    calendarCubit.calendarSelected();
-                  },
-                );
-              })),
-    );
+    return SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text('Available Device Calendars', style: TextStyle(
+                fontSize: 18.0,
+              ),),
+            ),
+            Container(
+              height: double.maxFinite,
+              child: ListView.builder(
+                  itemCount: calendars.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return new ListTile(
+                      leading: Icon(Icons.calendar_today),
+                      title: Text(calendars[index].name),
+                      subtitle: Text('Read Only? ${calendars[index].isReadOnly}'),
+                      trailing: Text(calendars[index].id),
+                      onTap: () {
+                        if(calendars[index].isReadOnly){
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('This calendar is read only!'),
+                          ));
+                        } else {
+                          final calendarCubit = context.bloc<AddToCalendarCubit>();
+                          calendarCubit.calendarSelected();
+                        }
+                      },
+                    );
+                  }),
+            ),
+          ],
+        ));
   }
 
   Widget _buildInitialLayout() {
@@ -108,9 +128,11 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
           children: <Widget>[
             Text(
               CalendarStrings.mainTitle,
-              style: Theme.of(context).textTheme.headline4,
+              style: TextStyle(
+                fontSize: 24.0,
+              ),
             ),
-            const SizedBox(height: 18.0),
+            const SizedBox(height: 32.0),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
