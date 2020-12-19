@@ -4,6 +4,9 @@ Using Device Calendar plugin to save events to default calendar based on platfor
 
 https://pub.dev/packages/device_calendar
 
+## Sample
+![](device_calendar_gif.gif)
+
 ## Doc
 addToCalendar() 
  
