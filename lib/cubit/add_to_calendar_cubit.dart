@@ -13,6 +13,8 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
 
   Future<List<Calendar>> loadCalendars() async {
     emit(AddToCalendarLoadCalendarsInProgress());
+    //Added for visual purposes
+    await Future.delayed(const Duration(seconds: 1));
     // Retrieve user's calendars from mobile device
     // Request permissions first if they haven't been granted
     var _calendars;
@@ -36,7 +38,7 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
     } catch (e) {
       print(e.toString());
     }
-    emit(AddToCalendarLoadCalendarsSuccess('Success!'));
+    emit(AddToCalendarLoadCalendarsSuccess('Success fetching your calendars!'));
     return _calendars;
   }
 
@@ -68,9 +70,5 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
           'Could not create : ${createEventResult.errorMessages.toString()}';
       emit(AddToCalendarFailure(errorMessage));
     }
-  }
-
-  void calendarSelected() {
-    emit(AddToCalendarCalendarSelected());
   }
 }
