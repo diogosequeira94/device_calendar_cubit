@@ -16,9 +16,12 @@ class CalendarEventFormPage extends StatelessWidget {
   final TextEditingController eventNameController = TextEditingController();
   final TextEditingController eventDescriptionController =
       TextEditingController();
+  final TextEditingController eventDurationController =
+  TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+
     final _addToCalenderCubit = BlocProvider.of<AddToCalendarCubit>(context);
 
     return Scaffold(
@@ -33,7 +36,7 @@ class CalendarEventFormPage extends StatelessWidget {
               content: Text(state.message),
             ));
           } else if (state is AddToCalendarSuccess) {
-            Scaffold.of(context).showSnackBar(SnackBar(
+            Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
               content: Text('Success! Added to $selectedCalendarName'),
             ));
           }
@@ -79,6 +82,20 @@ class CalendarEventFormPage extends StatelessWidget {
                             maxLength: 250,
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            controller: eventDurationController,
+                            keyboardType: TextInputType.number,
+                            maxLength: 1,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide:
+                                  BorderSide(color: Colors.red, width: 5.0),
+                                ),
+                                labelText: CalendarStrings.eventDuration),
+                          ),
+                        ),
                         const SizedBox(height: 8.0),
                         Container(
                           height: 40.0,
@@ -102,16 +119,15 @@ class CalendarEventFormPage extends StatelessWidget {
                               return RaisedButton(
                                   color: Theme.of(context).primaryColor,
                                   onPressed: () {
-                                    if (eventNameController.text != null &&
-                                        eventDescriptionController.text !=
-                                            null) {
+                                    if (_areEventDetailsValid()) {
                                       _submitEvent(
                                           _addToCalenderCubit,
                                           eventNameController.text,
-                                          eventDescriptionController.text);
+                                          eventDescriptionController.text,
+                                      eventDurationController.text);
                                     } else {
                                       Scaffold.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
                                         content: Text(
                                             CalendarStrings.informationMissing),
                                       ));
@@ -136,12 +152,18 @@ class CalendarEventFormPage extends StatelessWidget {
     );
   }
 
+  bool _areEventDetailsValid() {
+    return eventNameController.text.length != 0 &&
+        eventDescriptionController.text.length != 0 && eventDurationController.text.length != 0;
+  }
+
   void _submitEvent(AddToCalendarCubit _addToCalendarCubit, String eventName,
-      String eventDescription) {
+      String eventDescription, String eventDuration) {
+
     var _calendarEvent = CalendarEventModel(
       eventTitle: eventName,
       eventDescription: eventDescription,
-      eventDurationInHours: 3,
+      eventDurationInHours: int.parse(eventDuration),
     );
 
     _addToCalendarCubit.addToCalendar(_calendarEvent, selectedCalendarId);

@@ -32,10 +32,6 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             Scaffold.of(context).showSnackBar(SnackBar(
               content: Text(state.message),
             ));
-          } else if (state is AddToCalendarLoadCalendarsSuccess) {
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(state.message),
-            ));
           }
         },
         builder: (context, state) {
@@ -43,7 +39,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             return _buildInitialLayout();
           } else if (state is AddToCalendarLoadCalendarsInProgress) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is AddToCalendarLoadCalendarsSuccess) {
+          } else if (state is AddToCalendarLoadCalendarsSuccess || state is AddToCalendarSuccess) {
             return _buildCalendarsListLayout(_calendars);
           } else {
             return Center(child: Text(state.toString()));
@@ -81,7 +77,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                   trailing: Text(calendars[index].id),
                   onTap: () {
                     if (calendars[index].isReadOnly) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
+                      Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
                         content: Text('This calendar is read only!'),
                       ));
                     } else {
