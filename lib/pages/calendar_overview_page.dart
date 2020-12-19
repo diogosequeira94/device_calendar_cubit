@@ -38,9 +38,10 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             return _buildInitialLayout();
           } else if (state is CalendarsLoadInProgress) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is CalendarsLoadSuccess || state is AddToCalendarSuccess) {
+          } else if (state is CalendarsLoadSuccess ||
+              state is AddToCalendarSuccess) {
             return _buildCalendarsListLayout(_calendars);
-          } else if (state is CalendarsLoadFailure){
+          } else if (state is CalendarsLoadFailure) {
             return _buildInitialLayout();
           } else {
             return Center(child: CircularProgressIndicator());
@@ -63,11 +64,13 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
               ),
             ),
             const SizedBox(height: 32.0),
-            Image(width: 200,
-                height: 200,
+            Image(
+                width: 200.0,
+                height: 200.0,
                 image: AssetImage(CalendarStrings.pathToCalendarImg)),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
               child: Container(
                 width: double.infinity,
                 child: RaisedButton(
@@ -93,52 +96,55 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   Widget _buildCalendarsListLayout(List<Calendar> calendars) {
     return SingleChildScrollView(
         child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Available Calendars',
-                style: TextStyle(
-                  fontSize: 18.0,
-                ),
-              ),
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            CalendarStrings.availableCalendars,
+            style: TextStyle(
+              fontSize: 18.0,
             ),
-            Container(
-              height: double.maxFinite,
-              child: ListView.builder(
-                  itemCount: calendars.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        leading: Image(
-                            height: 40.0,
-                            width: 40.0,
-                            image: AssetImage(CalendarStrings.pathToCalendarImg)),
-                        title: Text(calendars[index].name),
-                        subtitle: Text('Is Read Only? ${calendars[index].isReadOnly ? 'Yes' : 'No'}'),
-                        trailing: Icon(Icons.keyboard_arrow_right),
-                        onTap: () {
-                          if (calendars[index].isReadOnly) {
-                            Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
-                              content: Text('This calendar is read only!'),
-                            ));
-                          } else {
-                            _selectedCalendarPressed(calendars[index].name, calendars[index].id);
-                          }
-                        },
-                      ),
-                    );
-                  }),
-            ),
-          ],
-        ));
+          ),
+        ),
+        Container(
+          height: double.maxFinite,
+          child: ListView.builder(
+              itemCount: calendars.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Card(
+                  child: ListTile(
+                    leading: Image(
+                        height: 40.0,
+                        width: 40.0,
+                        image: AssetImage(CalendarStrings.pathToCalendarImg)),
+                    title: Text(calendars[index].name),
+                    subtitle: Text(
+                        'Is Read Only? ${calendars[index].isReadOnly ? 'Yes' : 'No'}'),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      if (calendars[index].isReadOnly) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          duration: const Duration(milliseconds: 1500),
+                          content: Text(CalendarStrings.readOnlyCalendar),
+                        ));
+                      } else {
+                        _selectedCalendarPressed(
+                            calendars[index].name, calendars[index].id);
+                      }
+                    },
+                  ),
+                );
+              }),
+        ),
+      ],
+    ));
   }
 
-
-  _selectedCalendarPressed(String selectedCalendarName, String selectedCalendarId){
+  _selectedCalendarPressed(
+      String selectedCalendarName, String selectedCalendarId) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => BlocProvider.value(
             value: BlocProvider.of<CalendarCubit>(context),

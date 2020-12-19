@@ -6,14 +6,15 @@ class CalendarStrings {
   static String eventDescription = 'Event description';
   static String eventDuration = 'Event duration';
   static String showCalendarsBtn = 'Show Calendars';
+  static String availableCalendars = 'Available Calendars';
 
   //Failures
   static String noPermission = 'No permission to retrieve calendars!';
-  static String noCalendars = 'No calendars available or something unexpected happened, please try again.';
+  static String noCalendars =
+      'No calendars available or something unexpected happened, please try again.';
   static String informationMissing = 'Info Missing! Please fill all fields.';
+  static String readOnlyCalendar = 'This calendar is read only!';
 
   //Path to Calendar Image
   static String pathToCalendarImg = 'assets/images/calendar_icon.png';
-
-
 }
