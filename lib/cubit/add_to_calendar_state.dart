@@ -15,11 +15,10 @@ class AddToCalendarLoadCalendarsInProgress extends AddToCalendarState {
 }
 
 class AddToCalendarLoadCalendarsSuccess extends AddToCalendarState {
-  final String message;
-  const AddToCalendarLoadCalendarsSuccess(this.message);
+  const AddToCalendarLoadCalendarsSuccess();
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [];
 }
 
 class AddToCalendarLoadCalendarsFailure extends AddToCalendarState {

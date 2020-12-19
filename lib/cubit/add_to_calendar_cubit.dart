@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:device_calendar/device_calendar.dart';
+import 'package:device_calendar_sandbox/utils/calendar_strings.dart';
 import 'package:equatable/equatable.dart';
 
 import '../models/calendar_event_model.dart';
@@ -24,7 +25,7 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
         permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
         if (!permissionsGranted.isSuccess || !permissionsGranted.data) {
           emit(AddToCalendarLoadCalendarsFailure(
-              'No permission to retrieve calendars!'));
+              CalendarStrings.noPermission));
           return List.empty();
         }
       }
@@ -32,13 +33,13 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
       _calendars = calendarsResult?.data;
       if (_calendars.isEmpty || calendarsResult.errorMessages.length > 0) {
         emit(AddToCalendarLoadCalendarsFailure(
-            'No calendars available were found, please try again.'));
+            CalendarStrings.noCalendars));
         return List.empty();
       }
     } catch (e) {
       print(e.toString());
     }
-    emit(AddToCalendarLoadCalendarsSuccess('Success fetching your calendars!'));
+    emit(AddToCalendarLoadCalendarsSuccess());
     return _calendars;
   }
 
@@ -48,11 +49,9 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
     //Added for visual purposes
     await Future.delayed(const Duration(seconds: 2));
 
-    final _selectedCalendarId = selectedCalendarId;
-
     final eventTime = DateTime.now();
     final eventToCreate = Event(
-      _selectedCalendarId,
+      selectedCalendarId,
       title: calendarEventModel.eventTitle,
       description: calendarEventModel.eventDescription,
       start: eventTime,
