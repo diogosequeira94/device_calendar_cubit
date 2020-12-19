@@ -50,62 +50,6 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
     );
   }
 
-  Widget _buildCalendarsListLayout(List<Calendar> calendars) {
-    return SingleChildScrollView(
-        child: Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'Available Calendars',
-            style: TextStyle(
-              fontSize: 18.0,
-            ),
-          ),
-        ),
-        Container(
-          height: double.maxFinite,
-          child: ListView.builder(
-              itemCount: calendars.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: ListTile(
-                    leading: Image(
-                      height: 40.0,
-                        width: 40.0,
-                        image: AssetImage(CalendarStrings.pathToCalendarImg)),
-                    title: Text(calendars[index].name),
-                    subtitle: Text('Is Read Only? ${calendars[index].isReadOnly ? 'Yes' : 'No'}'),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      if (calendars[index].isReadOnly) {
-                        Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
-                          content: Text('This calendar is read only!'),
-                        ));
-                      } else {
-                        _selectedCalendarPressed(calendars[index].name, calendars[index].id);
-                      }
-                    },
-                  ),
-                );
-              }),
-        ),
-      ],
-    ));
-  }
-
-  _selectedCalendarPressed(String selectedCalendarName, String selectedCalendarId){
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-            value: BlocProvider.of<CalendarCubit>(context),
-            child: CalendarEventFormPage(
-                selectedCalendarName: selectedCalendarName,
-                selectedCalendarId: selectedCalendarId))));
-  }
-
   Widget _buildInitialLayout() {
     return Center(
       child: SingleChildScrollView(
@@ -144,5 +88,62 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildCalendarsListLayout(List<Calendar> calendars) {
+    return SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Available Calendars',
+                style: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+            ),
+            Container(
+              height: double.maxFinite,
+              child: ListView.builder(
+                  itemCount: calendars.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: ListTile(
+                        leading: Image(
+                            height: 40.0,
+                            width: 40.0,
+                            image: AssetImage(CalendarStrings.pathToCalendarImg)),
+                        title: Text(calendars[index].name),
+                        subtitle: Text('Is Read Only? ${calendars[index].isReadOnly ? 'Yes' : 'No'}'),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          if (calendars[index].isReadOnly) {
+                            Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(milliseconds: 1500),
+                              content: Text('This calendar is read only!'),
+                            ));
+                          } else {
+                            _selectedCalendarPressed(calendars[index].name, calendars[index].id);
+                          }
+                        },
+                      ),
+                    );
+                  }),
+            ),
+          ],
+        ));
+  }
+
+
+  _selectedCalendarPressed(String selectedCalendarName, String selectedCalendarId){
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+            value: BlocProvider.of<CalendarCubit>(context),
+            child: CalendarEventFormPage(
+                selectedCalendarName: selectedCalendarName,
+                selectedCalendarId: selectedCalendarId))));
   }
 }
