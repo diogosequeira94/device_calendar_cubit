@@ -46,10 +46,9 @@ class CalendarEventFormPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  CalendarStrings.mainTitle,
-                  style: Theme.of(context).textTheme.headline4,
-                ),
+                Image(width: 160,
+                    height: 160,
+                    image: AssetImage(CalendarStrings.pathToCalendarImg)),
                 const SizedBox(height: 18.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
