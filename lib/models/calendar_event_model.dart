@@ -9,8 +9,8 @@ class CalendarEventModel extends Equatable {
   const CalendarEventModel({
     @required this.eventTitle,
     @required this.eventDescription,
-    @required this.eventDurationInHours}
-  );
+    @required this.eventDurationInHours
+  });
 
   @override
   List<Object> get props => [

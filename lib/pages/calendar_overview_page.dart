@@ -120,7 +120,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                         height: 40.0,
                         width: 40.0,
                         image: AssetImage(CalendarStrings.pathToCalendarImg)),
-                    title: Text(calendars[index].name),
+                    title: Text(_fakeCalendarNames(index)),
                     subtitle: Text(
                         'Is Read Only? ${calendars[index].isReadOnly ? 'Yes' : 'No'}'),
                     trailing: Icon(Icons.keyboard_arrow_right),
@@ -151,5 +151,26 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             child: CalendarEventFormPage(
                 selectedCalendarName: selectedCalendarName,
                 selectedCalendarId: selectedCalendarId))));
+  }
+
+  String _fakeCalendarNames(int index){
+    switch(index) {
+      case 0: {
+        return 'My Calendar';
+      }
+      break;
+
+      case 1: {  return 'samplecalendar1@gmail.com'; }
+      break;
+
+      case 2: {  return 'diogocnsequeira@gmail.com'; }
+      break;
+
+      case 3: { return 'samplecalendar3@gmail.com'; }
+      break;
+
+      default: { return 'samplecalendar4@gmail.com'; }
+      break;
+    }
   }
 }
