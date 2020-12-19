@@ -1,6 +1,11 @@
+import 'package:device_calendar/device_calendar.dart';
 import 'package:device_calendar_sandbox/cubit/add_to_calendar_cubit.dart';
+import 'package:device_calendar_sandbox/utils/calendar_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/add_to_calendar_cubit.dart';
+import '../cubit/add_to_calendar_cubit.dart';
 import '../cubit/add_to_calendar_cubit.dart';
 import '../models/calendar_event_model.dart';
 
@@ -19,7 +24,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Event to Calendar Cubit Demo'),
+        title: Text(CalendarStrings.appTitle),
       ),
       body: BlocConsumer<AddToCalendarCubit, AddToCalendarState>(
         listener: (context, state) {
@@ -35,64 +40,32 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             Scaffold.of(context).showSnackBar(SnackBar(
               content: Text(state.message),
             ));
+          } else if (state is AddToCalendarFailure) {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(state.message),
+            ));
+          } else if (state is AddToCalendarSuccess) {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(state.message),
+            ));
+          } else if(state is AddToCalendarCalendarSelected){
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('Calendar Was Selected!'),
+            ));
           }
         },
         builder: (context, state) {
           if (state is AddToCalendarInitial) {
             return _buildInitialLayout();
-          }
-          if (state is AddToCalendarInProgress) {
-            return CircularProgressIndicator();
-          } else {
+          } else if (state is AddToCalendarLoadCalendarsSuccess) {
+            return _buildCalendarsListLayout(_calendars);
+          } else if(state is AddToCalendarCalendarSelected) {
             return _buildEventFormLayout();
+          } else {
+            return _buildInitialLayout();
           }
         },
-      ),
-      floatingActionButton:
-          BlocConsumer<AddToCalendarCubit, AddToCalendarState>(
-              listener: (context, state) {
-        if (state is AddToCalendarFailure) {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(state.message),
-          ));
-        }
-        if (state is AddToCalendarSuccess) {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(state.message),
-          ));
-        }
-      }, builder: (context, state) {
-        if (state is AddToCalendarInitial) {
-          return FloatingActionButton(
-            onPressed: () {
-              final calendarCubit = context.bloc<AddToCalendarCubit>();
-              calendarCubit.addToCalendar(_calendarEvent, '2');
-            },
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          );
-        } else if (state is AddToCalendarInProgress) {
-          return CircularProgressIndicator();
-        } else if (state is AddToCalendarSuccess) {
-          return FloatingActionButton(
-            onPressed: () {
-              final calendarCubit = context.bloc<AddToCalendarCubit>();
-              calendarCubit.addToCalendar(_calendarEvent, '2');
-            },
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          );
-        } else {
-          return FloatingActionButton(
-            onPressed: () {
-              final calendarCubit = context.bloc<AddToCalendarCubit>();
-              calendarCubit.addToCalendar(_calendarEvent, '2');
-            },
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          );
-        }
-      }), // This trailing comma makes auto-formatting nicer for build methods.
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -107,6 +80,26 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
     calendarCubit.addToCalendar(_calendarEvent, '0');
   }
 
+  Widget _buildCalendarsListLayout(List<Calendar> calendars) {
+    return Center(
+      child: SingleChildScrollView(
+          child: ListView.builder(
+              itemCount: calendars.length,
+              itemBuilder: (BuildContext context, int index) {
+                return new ListTile(
+                  leading: Icon(Icons.calendar_today),
+                  title: Text(calendars[index].name),
+                  subtitle: Text(calendars[index].accountType),
+                  trailing: Text(calendars[index].id),
+                  onTap: () {
+                    final calendarCubit = context.bloc<AddToCalendarCubit>();
+                    calendarCubit.calendarSelected();
+                  },
+                );
+              })),
+    );
+  }
+
   Widget _buildInitialLayout() {
     return Center(
       child: SingleChildScrollView(
@@ -114,7 +107,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Text(
-              'Event Calendar App',
+              CalendarStrings.mainTitle,
               style: Theme.of(context).textTheme.headline4,
             ),
             const SizedBox(height: 18.0),
@@ -123,13 +116,13 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
               child: Container(
                 width: double.infinity,
                 child: RaisedButton(
-                    color: Colors.deepOrange,
+                    color: Theme.of(context).primaryColor,
                     onPressed: () async {
                       final calendarCubit = context.bloc<AddToCalendarCubit>();
                       _calendars = await calendarCubit.loadCalendars();
                     },
                     child: Text(
-                      'Show Calendars',
+                      CalendarStrings.showCalendarsBtn,
                       style: TextStyle(color: Colors.white),
                     )),
               ),
@@ -151,7 +144,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Event Calendar App',
+              CalendarStrings.mainTitle,
               style: Theme.of(context).textTheme.headline4,
             ),
             const SizedBox(height: 18.0),
@@ -169,7 +162,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                               borderSide:
                                   BorderSide(color: Colors.red, width: 5.0),
                             ),
-                            labelText: 'Event Name'),
+                            labelText: CalendarStrings.eventName),
                       ),
                     ),
                     Padding(
@@ -181,31 +174,52 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                               borderSide:
                                   BorderSide(color: Colors.red, width: 5.0),
                             ),
-                            labelText: 'Event description'),
+                            labelText: CalendarStrings.eventDescription),
                         maxLines: 3,
                         maxLength: 250,
                       ),
                     ),
                     const SizedBox(height: 8.0),
                     Container(
+                      height: 40.0,
                       width: double.infinity,
-                      child: RaisedButton(
-                          color: Colors.deepOrange,
-                          onPressed: () {
-                            if (eventNameController.text != null &&
-                                eventDescriptionController.text != null) {
-                              _submitEvent(eventNameController.text,
-                                  eventDescriptionController.text);
-                            } else {
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text('Information missing'),
+                      child:
+                          BlocBuilder<AddToCalendarCubit, AddToCalendarState>(
+                              builder: (context, state) {
+                        if (state is AddToCalendarInProgress) {
+                          return RaisedButton(
+                              color: Theme.of(context).primaryColor,
+                              onPressed: null,
+                              disabledColor: Theme.of(context).primaryColor,
+                              child: const SizedBox(
+                                height: 24.0,
+                                width: 24.0,
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                  strokeWidth: 2,
+                                ),
                               ));
-                            }
-                          },
-                          child: Text(
-                            'Create Event',
-                            style: TextStyle(color: Colors.white),
-                          )),
+                        } else {
+                          return RaisedButton(
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                if (eventNameController.text != null &&
+                                    eventDescriptionController.text != null) {
+                                  _submitEvent(eventNameController.text,
+                                      eventDescriptionController.text);
+                                } else {
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text(
+                                        CalendarStrings.informationMissing),
+                                  ));
+                                }
+                              },
+                              child: Text(
+                                CalendarStrings.addToCalendar,
+                                style: TextStyle(color: Colors.white),
+                              ));
+                        }
+                      }),
                     ),
                   ],
                 ),

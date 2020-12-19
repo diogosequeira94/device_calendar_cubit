@@ -43,6 +43,8 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
   Future<void> addToCalendar(
       CalendarEventModel calendarEventModel, String selectedCalendarId) async {
     emit(AddToCalendarInProgress());
+    //Added for visual purposes
+    await Future.delayed(const Duration(seconds: 2));
 
     final _selectedCalendarId = selectedCalendarId;
 
@@ -66,5 +68,9 @@ class AddToCalendarCubit extends Cubit<AddToCalendarState> {
           'Could not create : ${createEventResult.errorMessages.toString()}';
       emit(AddToCalendarFailure(errorMessage));
     }
+  }
+
+  void calendarSelected() {
+    emit(AddToCalendarCalendarSelected());
   }
 }

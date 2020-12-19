@@ -30,6 +30,11 @@ class AddToCalendarLoadCalendarsFailure extends AddToCalendarState {
   List<Object> get props => [message];
 }
 
+class AddToCalendarCalendarSelected extends AddToCalendarState {
+  @override
+  List<Object> get props => [];
+}
+
 
 class AddToCalendarInProgress extends AddToCalendarState {
   @override
