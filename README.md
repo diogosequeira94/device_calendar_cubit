@@ -1,6 +1,6 @@
 ## About
 
-Using Device Calendar plugin to save events to default calendar based on platform.
+App that uses Device Calendar plugin to create and update events to all calendars.
 
 https://pub.dev/packages/device_calendar
 
